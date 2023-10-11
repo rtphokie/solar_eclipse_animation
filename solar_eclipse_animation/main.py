@@ -45,7 +45,6 @@ def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, d
         sun_az = event['sun_az']
         moon_alt = event['moon_alt']
         moon_az = event['moon_az']
-        # print(f"moon {moon_alt:.2f} {moon_az:.2f}")
 
         time_utc_dt = dateutil.parser.isoparse(event['utc_iso'])
         time_local_dt = time_utc_dt.astimezone(ZoneInfo(timezone))
@@ -71,14 +70,12 @@ def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, d
         else:
             ll = f"{local_time}"
             lr = f"{msg} {obs * 100:.1f}%"
-        print(ll)
 
         dirname = compositing(label_ll=ll, label_lr=lr, title=name,
                               iso=time_local_dt.strftime('%Y%m%dT%H%M%S'),
                               sun_radius=event['sun_r'], moon_radius=event['moon_r'],
                               moon_alt_delta_deg=sun_alt - moon_alt,
                               moon_az_delta_deg=moon_az - sun_az, frame=True, filename=font)
-    # print(dirname)
     print(f"calling ffmpeg to generate MP4 animation ")
     os.chdir(dirname)
     filename_mp4 = f"{name.replace(' ', '_')}_{year}{month:02d}{day:02d}.mp4"

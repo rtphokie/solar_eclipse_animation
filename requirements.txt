@@ -2,3 +2,4 @@ Pillow
 pandas
 skyfield
 timezonefinder
+tqdm
