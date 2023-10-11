@@ -1,0 +1,1 @@
+from solar_eclipse_animation.main import main

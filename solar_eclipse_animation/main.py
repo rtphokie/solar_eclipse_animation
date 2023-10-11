@@ -6,8 +6,8 @@ from skyfield import api
 from timezonefinder import TimezoneFinder
 from tqdm import tqdm
 
-from solar_eclipse_animation.imaging import compositing
-from solar_eclipse_animation.skyfieldcalcs import circumstances, eclipse_fraction
+from imaging import compositing
+from skyfieldcalcs import circumstances, eclipse_fraction
 
 # reusable objects
 ts = api.load.timescale()
@@ -21,8 +21,8 @@ def decdeg2dms(dd):
     return int(mult * deg), int(mult * mnt), mult * sec
 
 
-def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, day=14, ele=97):
-    # def main(name='Nashville, TN', lat=36.1627, lon=-86.7816, year=2023, month=10, day=14, ele=0):
+def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, day=14, ele=97, font=None,
+         handbrake=False):
     timezone = tf.timezone_at(lng=lon, lat=lat)
 
     c1, c2, mid, c3, c4, df = circumstances(ts.utc(year, month, day), lat, lon, ele=ele)
@@ -34,6 +34,7 @@ def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, d
     # for event, msg in zip([c1, c2, mid, c3, c4], ['start of partial eclipse', 'start of annular eclipse', 'maximum eclipse', 'end of annular eclipse', 'end of partial eclipse']):
     pbar = tqdm(total=df_eclipsed.shape[0])
     dirname = 'unknown'
+    print(f'generating {df_eclipsed.shape[0]} animation frames for {name} for the eclipse on {year}-{month}-{day}')
     for n, event in df_eclipsed.iterrows():
         msg = ' '
         pbar.update(1)
@@ -65,20 +66,29 @@ def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, d
             msg = 'end of partial eclipse'
         else:
             msg = ''
+        if font is None:
+            ll = lr = None
+        else:
+            ll = f"{local_time}"
+            lr = f"{msg} {obs * 100:.1f}%"
+        print(ll)
 
-        dirname = compositing(label_ll=f"{local_time}", label_lr=f"{msg} {obs * 100:.1f}%",
-                              title=name, iso=time_local_dt.strftime('%Y%m%dT%H%M%S'),
+        dirname = compositing(label_ll=ll, label_lr=lr, title=name,
+                              iso=time_local_dt.strftime('%Y%m%dT%H%M%S'),
                               sun_radius=event['sun_r'], moon_radius=event['moon_r'],
                               moon_alt_delta_deg=sun_alt - moon_alt,
-                              moon_az_delta_deg=moon_az - sun_az,
-                              frame=True)
+                              moon_az_delta_deg=moon_az - sun_az, frame=True, filename=font)
     # print(dirname)
+    print(f"calling ffmpeg to generate MP4 animation ")
     os.chdir(dirname)
-    filename_mp4 = f"{name.replace(' ', '_')}_ASE20231014.mp4"
+    filename_mp4 = f"{name.replace(' ', '_')}_{year}{month:02d}{day:02d}.mp4"
     cmd = f'''ffmpeg  -pattern_type glob -i "*.png" -c:v libx264 -pix_fmt yuv420p -y "{name.replace(' ', '_')}_ASE20231014.mp4"'''
     # cmd = f'''ffmpeg -f concat -i input.txt -c:v libx264 -pix_fmt yuv420p -y "{name.replace(' ', '_')}_ASE20231014.mp4"'''
-    print(cmd)
-    os.system(cmd)
-    cmd = f'''/Applications/HandBrakeCLI -i {filename_mp4} -o ../{filename_mp4.replace(',', '')}'''
-    print(cmd)
-    os.system(cmd)
+    if handbrake:
+        print(f"calling handbrakecli to generate MP4 animation ")
+
+        print(cmd)
+        os.system(cmd)
+        cmd = f'''/Applications/HandBrakeCLI -i {filename_mp4} -o ../{filename_mp4.replace(',', '')}'''
+        print(cmd)
+        os.system(cmd)

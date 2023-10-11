@@ -45,10 +45,10 @@ def compositing( frame=False, title='unknown', filename=None,
     new_moon_y = round(centered_moon_y + (moon_alt_delta_deg * pixels_per_degree))
     imb.paste(imm, (new_moon_x, new_moon_y), imm_mask)
 
-    myFont = ImageFont.truetype('../fonts/BebasNeue-Bold.ttf', fontsize)
     border = fontsize * 1.3
     I1 = ImageDraw.Draw(imb)
     if label_ll is not None:
+        myFont = ImageFont.truetype(filename, fontsize)
         I1.text((border, imb_size[1] - border), label_ll, font=myFont, fill=(0, 0, 0), anchor='ls')
 
     if label_lr is not None:
@@ -67,7 +67,7 @@ def compositing( frame=False, title='unknown', filename=None,
     if not os.path.isfile(fullpath):
         imb.save(fullpath, quality=95)
 
-    if 'eclipse' in label_lr:
+    if label_lr is not None and 'eclipse' in label_lr:
         if 'maximum' in label_lr:
             cnt = 150
         else:
