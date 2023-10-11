@@ -21,11 +21,11 @@ def decdeg2dms(dd):
     return int(mult * deg), int(mult * mnt), mult * sec
 
 
-def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, day=14, ele=97, font=None,
+def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, day=14, ele=97, font=None, ephfilename='de430t.bsp',
          handbrake=False):
     timezone = tf.timezone_at(lng=lon, lat=lat)
 
-    c1, c2, mid, c3, c4, df = circumstances(ts.utc(year, month, day), lat, lon, ele=ele)
+    c1, c2, mid, c3, c4, df = circumstances(ts.utc(year, month, day), lat, lon, ele=ele, ephfilename=ephfilename)
     df_eclipsed = df[(df.eclipse_fraction > 0)]
     aaa = df[(df.eclipse_fraction > 0)]
     aaa = aaa[['utc_iso', 'separation', 'moon_r', 'sun_r', 'eclipse_fraction']]
@@ -80,12 +80,11 @@ def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, d
     os.chdir(dirname)
     filename_mp4 = f"{name.replace(' ', '_')}_{year}{month:02d}{day:02d}.mp4"
     cmd = f'''ffmpeg  -pattern_type glob -i "*.png" -c:v libx264 -pix_fmt yuv420p -y "{name.replace(' ', '_')}_ASE20231014.mp4"'''
-    # cmd = f'''ffmpeg -f concat -i input.txt -c:v libx264 -pix_fmt yuv420p -y "{name.replace(' ', '_')}_ASE20231014.mp4"'''
+    os.system(cmd)
+    print(f"wrote to {filename_mp4}")
     if handbrake:
-        print(f"calling handbrakecli to generate MP4 animation ")
+        print(f"calling handbrakecli to reMP4 animation ")
 
-        print(cmd)
-        os.system(cmd)
-        cmd = f'''/Applications/HandBrakeCLI -i {filename_mp4} -o ../{filename_mp4.replace(',', '')}'''
+        cmd = f'''/Applications/HandBrakeCLI -r 20 --unsharp medium -i {filename_mp4} -o ../{filename_mp4.replace(',', '')}'''
         print(cmd)
         os.system(cmd)

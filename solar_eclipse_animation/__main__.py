@@ -12,6 +12,7 @@ if __name__ == '__main__':
     parser.add_argument('longitude', help='decimal longitude in degrees (example: -78.664')
     parser.add_argument('--name', help='subdirectory name, defaults to lat/lon')
     parser.add_argument('--fontfile', help='path to true type font file, a (local time) clock to the lower left and percent obscuration to the lower right')
+    parser.add_argument('--eph', default='de430t.bsp', help='JPL planetary and lunar ephemerides spice file (default: DE430, which covers 1550 CE to 2650 CE with reasonable delta T)')
     args = parser.parse_args()
     try:
         longitude = float(args.longitude)
@@ -28,5 +29,5 @@ if __name__ == '__main__':
     else:
         name = args.name
 
-    main(name=name, lat=latitude, lon=longitude, font=args.fontfile)
+    main(name=name, lat=latitude, lon=longitude, font=args.fontfile, ephfilename=args.eph)
 

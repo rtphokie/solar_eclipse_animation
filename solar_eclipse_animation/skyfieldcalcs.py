@@ -61,7 +61,7 @@ def alt_az_dist(df, body, label):
     df[f'{label}_dist'] = distance.km
 
 
-def circumstances(start, lat, lon, ele=100, end=None, tzstring=None, eph=None):
+def circumstances(start, lat, lon, ele=100, end=None, tzstring=None, eph=None, ephfilename=None):
     '''
     Calculates local circumstances of an eclipse returning datetimes (UTC) for partial
     eclipse contact points (c1 and c4), the moment of maxium eclipse, along with contact
@@ -88,7 +88,7 @@ def circumstances(start, lat, lon, ele=100, end=None, tzstring=None, eph=None):
 
     day, hour, minute, month, second, year = get_ints_for_dt_params(start)
     if eph is None:
-        eph = load_ephemeris(year)
+        eph = load_ephemeris(ephfilename)
     if end is None:
         # all we have is a day, so let look across all minutes across a
         # 2 day span centered on noon UTC on the day passed
@@ -190,13 +190,7 @@ def contact_points(df):
     return c1, c2, mid_eclipse, c3, c4
 
 
-def load_ephemeris(year=2023):
+def load_ephemeris(de='de430t.bsp'):
     load = Loader("/var/data")  # centralize local caching of ephemeris files
-    de = 'de430t.bsp'
-    # de = 'de440s.bsp'
-
     eph = load(de)
-    # jkl = str(eph).split("\n")
-    # print(year, de, jkl[1])
-
     return eph

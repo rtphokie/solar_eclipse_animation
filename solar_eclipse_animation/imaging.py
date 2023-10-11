@@ -18,8 +18,8 @@ def compositing( frame=False, title='unknown', filename=None,
                 label_ll=None, label_lr=None,
                 sun_radius=None, moon_radius=None, iso=None,
                 moon_alt_delta_deg=0, moon_az_delta_deg=0,
-                fontsize=100, basedir='/Users/trice/PyCharmProjects/sandbox/solar_eclipse_animation',
-                imagedir='/Users/trice/PyCharmProjects/sandbox/solar_eclipse_animation/images'):
+                fontsize=100, basedir='.',
+                imagedir=f'./images'):
     ratio = moon_radius / sun_radius
     moon_az_delta_deg *= .725  # rough adjustment for 2D representation
     imb, imb_size, bg_center, imb_mask = prep_image(f'{imagedir}/bluesky_4k.png',
