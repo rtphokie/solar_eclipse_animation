@@ -77,28 +77,36 @@ class MyTestCase(unittest.TestCase):
                                             'lon': float(config[section]['lon']),
                                              'ele': int(config[section]['ele'])
                                             }
+        from PIL import Image, ImageDraw, ImageFont
+        fontsize = 100
+        myFont = ImageFont.truetype('../fonts/BebasNeue-Bold.ttf', fontsize)
+
+
         for city, data in cities.items():
+            if 'Richmond' not in city:
+                continue
             print(city)
             pprint(data)
-            timezone = tf.timezone_at(lng=data['lon'], lat=data['lat'])
+            # timezone = tf.timezone_at(lng=data['lon'], lat=data['lat'])
+            main(name=city, lon=data['lon'], lat=data['lat'])
 
-            c1, c2, mid, c3, c4, df = circumstances(ts.utc(2023, 10, 14), data['lat'], data['lon'], ele=data['ele'])
-            event=mid
-            time_utc_dt = dateutil.parser.isoparse(event['utc_iso'])
-            time_local_dt = time_utc_dt.astimezone(ZoneInfo(timezone))
-            local_time = time_local_dt.strftime('%-I:%M %p %Z')
-            sun_alt = event['sun_alt']
-            sun_az = event['sun_az']
-            moon_alt = event['moon_alt']
-            moon_az = event['moon_az']
-            obs = eclipse_fraction(event['separation'], event['moon_r'], event['sun_r'])
-            dirname = compositing(label_ll=f"{local_time}", label_lr=f"Maximum Eclipse {obs * 100:.1f}%",
-                                  title=city, iso=time_local_dt.strftime('%Y%m%dT%H%M%S'),
-                                  sun_radius=event['sun_r'], moon_radius=event['moon_r'],
-                                  moon_alt_delta_deg=sun_alt - moon_alt,
-                                  moon_az_delta_deg=moon_az - sun_az,
-                                  imagedir='/Users/trice/PyCharmProjects/sandbox/solar_eclipse_animation/images')
-
+            # c1, c2, mid, c3, c4, df = circumstances(ts.utc(2023, 10, 14), data['lat'], data['lon'], ele=data['ele'])
+            # event=mid
+            # time_utc_dt = dateutil.parser.isoparse(event['utc_iso'])
+            # time_local_dt = time_utc_dt.astimezone(ZoneInfo(timezone))
+            # local_time = time_local_dt.strftime('%-I:%M %p %Z')
+            # sun_alt = event['sun_alt']
+            # sun_az = event['sun_az']
+            # moon_alt = event['moon_alt']
+            # moon_az = event['moon_az']
+            # obs = eclipse_fraction(event['separation'], event['moon_r'], event['sun_r'])
+            # dirname = compositing(label_ll=f"{local_time}", label_lr=f"Maximum Eclipse {obs * 100:.1f}%",
+            #                       title=city, iso=time_local_dt.strftime('%Y%m%dT%H%M%S'),
+            #                       sun_radius=event['sun_r'], moon_radius=event['moon_r'],
+            #                       moon_alt_delta_deg=sun_alt - moon_alt,
+            #                       moon_az_delta_deg=moon_az - sun_az,
+            #                       imagedir='/Users/trice/PyCharmProjects/sandbox/solar_eclipse_animation/images')
+            #
 
 def obs(d, R, r):
     return (1 - intersection_area(d, R, r))
