@@ -1,6 +1,6 @@
 # solar_eclipse_animation
 
-Creates an MP4 animation of the Oct 14, 2023 annular solar clipse
+Creates an MP4 animation of the Oct 14, 2023 annular solar eclipse
 
 ## Requirements
 

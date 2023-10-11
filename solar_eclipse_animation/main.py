@@ -83,7 +83,7 @@ def main(name='Raleigh, NC', lat=35.78255, lon=-78.63899, year=2023, month=10, d
     os.system(cmd)
     print(f"wrote to {filename_mp4}")
     if handbrake:
-        print(f"calling handbrakecli to reMP4 animation ")
+        print(f"refining animation with handbrakecli")
 
         cmd = f'''/Applications/HandBrakeCLI -r 20 --unsharp medium -i {filename_mp4} -o ../{filename_mp4.replace(',', '')}'''
         print(cmd)
